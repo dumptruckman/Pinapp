@@ -4,12 +4,35 @@ import java.util.ArrayList;
 
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
+import pluginbase.bukkit.BukkitPluginAgent;
+import pluginbase.plugin.PluginBase;
 
 public class Pinapp extends JavaPlugin {
+
+    private final BukkitPluginAgent<Pinapp> pluginAgent;
+
     public static ArrayList<Integer> portalTypes = new ArrayList<Integer>();
     private PinappPortal pinappPortal;
     private PinappPortalCreate pinappPC;
     public PinappConfig pc;
+
+    public Pinapp() {
+        pluginAgent = BukkitPluginAgent.getPluginAgent(Pinapp.class, this, "pinapp");
+        pluginAgent.setDefaultSettingsCallable(() -> new PinappConfig(getPluginBase()));
+        pluginAgent.setPermissionPrefix("pinapp");
+
+        // Register commands
+        //pluginAgent.registerCommand(GiveLockCommand.class);
+        //pluginAgent.registerCommand(GiveDustCommand.class);
+        //pluginAgent.registerCommand(GiveKeyCommand.class);
+
+        // Register language
+        //pluginAgent.registerMessages(Messages.class);
+    }
+
+    PluginBase getPluginBase() {
+        return pluginAgent.getPluginBase();
+    }
 
     @Override
     public void onDisable() {
