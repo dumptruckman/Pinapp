@@ -77,10 +77,3 @@ public class PinappPortal implements Listener {
 
 }
 
-class PinappWorld implements Listener {
-
-    @EventHandler
-    public void onPortalCreate(PortalCreateEvent event) {
-        event.setCancelled(true);
-    }
-}
