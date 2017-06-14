@@ -9,78 +9,78 @@ import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 
 public class PinappPortalCreate {
-	Pinapp p;
+    Pinapp p;
 
-	public PinappPortalCreate(Pinapp p) {
-		this.p = p;
-	}
+    public PinappPortalCreate(Pinapp p) {
+        this.p = p;
+    }
 
-	public void register() {
-		BlockWatch b = new BlockWatch(p);
-		p.getServer().getPluginManager().registerEvents(b, p);
-		p.log("Registered BLOCK_PLACE, BLOCK_IGNITE, and BLOCK_PHYSICS events successfully.");
-	}
+    public void register() {
+        BlockWatch b = new BlockWatch(p);
+        p.getServer().getPluginManager().registerEvents(b, p);
+        p.log("Registered BLOCK_PLACE, BLOCK_IGNITE, and BLOCK_PHYSICS events successfully.");
+    }
 }
 
 class BlockWatch implements Listener {
-	Pinapp p;
+    Pinapp p;
 
-	BlockWatch(Pinapp p) {
-		this.p = p;
-	}
+    BlockWatch(Pinapp p) {
+        this.p = p;
+    }
 
-	public void onBlockPlace(BlockPlaceEvent event) {
-		if(event.isCancelled())
-			return;
-		Block block = event.getBlock().getRelative(0, -1, 0);
-		Player player = event.getPlayer();
-		if (player == null)
-			return;
-		if (!(player.hasPermission("pinapp.portal.create") || player.isOp()))
-			return;
-		if (event.getBlock().getTypeId() != 51)
-			return;
-		event.getBlock().setTypeId(0);
-		CheckBlock check = new CheckBlock(p, block);
-		int orientation = check.check();
-		if (orientation == -1)
-			event.getBlock().setTypeId(51);
-		check.createPortal(orientation);
-	}
+    public void onBlockPlace(BlockPlaceEvent event) {
+        if(event.isCancelled())
+            return;
+        Block block = event.getBlock().getRelative(0, -1, 0);
+        Player player = event.getPlayer();
+        if (player == null)
+            return;
+        if (!(player.hasPermission("pinapp.portal.create") || player.isOp()))
+            return;
+        if (event.getBlock().getTypeId() != 51)
+            return;
+        event.getBlock().setTypeId(0);
+        CheckBlock check = new CheckBlock(p, block);
+        int orientation = check.check();
+        if (orientation == -1)
+            event.getBlock().setTypeId(51);
+        check.createPortal(orientation);
+    }
 
-	public void onBlockPhysics(BlockPhysicsEvent event) {
-		if(event.isCancelled())
-			return;
-		if (event.getBlock().getType() != Material.PORTAL)
-			return;
-		Block block = event.getBlock();
-		for (int i = 0; i <= 4; i++) {
-			if (block.getRelative(0, -i, 0).getType() != Material.PORTAL
-					&& block.getRelative(0, -1, 0).getType() != Material.AIR) {
-				block = block.getRelative(0, -i, 0);
-				break;
-			}
-		}
-		CheckBlock b = new CheckBlock(p, block);
-		int orientation = b.check();
-		if (orientation >= 0)
-			event.setCancelled(true);
-	}
+    public void onBlockPhysics(BlockPhysicsEvent event) {
+        if(event.isCancelled())
+            return;
+        if (event.getBlock().getType() != Material.PORTAL)
+            return;
+        Block block = event.getBlock();
+        for (int i = 0; i <= 4; i++) {
+            if (block.getRelative(0, -i, 0).getType() != Material.PORTAL
+                    && block.getRelative(0, -1, 0).getType() != Material.AIR) {
+                block = block.getRelative(0, -i, 0);
+                break;
+            }
+        }
+        CheckBlock b = new CheckBlock(p, block);
+        int orientation = b.check();
+        if (orientation >= 0)
+            event.setCancelled(true);
+    }
 
-	public void onBlockIgnite(BlockIgniteEvent event) {
-		if(event.isCancelled())
-			return;
-		Block block = event.getBlock();
-		Player player = event.getPlayer();
-		if (player == null)
-			return;
-		if (!(player.hasPermission("pinapp.portal.create") || player.isOp()))
-			return;
-		event.getBlock().getRelative(0, 1, 0).setTypeId(0);
-		CheckBlock check = new CheckBlock(p, block);
-		int orientation = check.check();
-		check.createPortal(orientation);
-		if (orientation == -1)
-			event.getBlock().getRelative(0, 1, 0).setTypeId(51);
-	}
+    public void onBlockIgnite(BlockIgniteEvent event) {
+        if(event.isCancelled())
+            return;
+        Block block = event.getBlock();
+        Player player = event.getPlayer();
+        if (player == null)
+            return;
+        if (!(player.hasPermission("pinapp.portal.create") || player.isOp()))
+            return;
+        event.getBlock().getRelative(0, 1, 0).setTypeId(0);
+        CheckBlock check = new CheckBlock(p, block);
+        int orientation = check.check();
+        check.createPortal(orientation);
+        if (orientation == -1)
+            event.getBlock().getRelative(0, 1, 0).setTypeId(51);
+    }
 }
