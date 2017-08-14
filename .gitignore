@@ -44,3 +44,4 @@ debug.log
 debug.txt
 
 out
+.gradle/
