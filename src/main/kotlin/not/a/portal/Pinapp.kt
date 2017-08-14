@@ -61,5 +61,5 @@ class Pinapp : JavaPlugin {
         super.saveConfig()
     }
 
-
+    fun getWorldSettings(material: Material) = settingsByMaterial[material]
 }

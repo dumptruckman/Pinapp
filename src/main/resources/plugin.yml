@@ -2,3 +2,7 @@ name: Pinapp
 main: not.a.portal.Pinapp
 author: dumptruckman
 version: @plugin_version@
+
+permissions:
+  pinapp.portal.create:
+    default: OP

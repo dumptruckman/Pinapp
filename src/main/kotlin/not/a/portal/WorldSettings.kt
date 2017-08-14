@@ -4,7 +4,7 @@ import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.configuration.serialization.ConfigurationSerializable
 
-class WorldSettings(var name: CharSequence,
+class WorldSettings(var worldName: CharSequence,
                     var material: Material,
                     var environment: World.Environment = World.Environment.NORMAL,
                     var seed: CharSequence? = null,
@@ -12,7 +12,7 @@ class WorldSettings(var name: CharSequence,
 
     override fun serialize(): Map<String, Any> {
         val result = mutableMapOf<String, Any>()
-        result["name"] = name
+        result["name"] = worldName
         result["material"] = material
         result["environment"] = environment
         if (seed != null) result["seed"] = seed.toString()
