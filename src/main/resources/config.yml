@@ -1,0 +1,6 @@
+worlds:
+  - name: world
+    material: IRON_ORE
+    seed: 1557195922
+    generator: Default
+    env: Normal
