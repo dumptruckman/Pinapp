@@ -1,7 +1,6 @@
 package com.ubempire.not.a.portal;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -10,29 +9,24 @@ import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.WorldCreator;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.generator.ChunkGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pluginbase.plugin.PluginBase;
-import pluginbase.plugin.Settings;
 
-public class PinappConfig extends Settings {
+public class PinappConfig {
 
-    transient Pinapp jp;
+    Pinapp jp;
 
-    transient HashMap<Integer, String> ibw = new HashMap<Integer, String>();
-    transient HashMap<String, Integer> wbi = new HashMap<String, Integer>();
+    HashMap<Integer, String> ibw = new HashMap<Integer, String>();
+    HashMap<String, Integer> wbi = new HashMap<String, Integer>();
 
     private Map<String, WorldSettings> worlds;
 
-    private PinappConfig() { }
-
-    PinappConfig(@NotNull PluginBase<Pinapp> pluginBase) {
-        super(pluginBase);
+    PinappConfig(Pinapp p) {
+        this.jp = p;
         worlds = new HashMap<>();
 
-        World defaultWorld = pluginBase.getPlugin().getServer().getWorlds().get(0);
+        World defaultWorld = jp.getServer().getWorlds().get(0);
 
         WorldSettings defaultWorldSettings = new WorldSettings();
         defaultWorldSettings.material = Material.GOLD_ORE;
@@ -50,10 +44,6 @@ public class PinappConfig extends Settings {
         private Environment environment;
         @Nullable
         private String generator;
-    }
-
-    PinappConfig(Pinapp jp) {
-        this.jp = jp;
     }
 
     public void setDefaults() {
