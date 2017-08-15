@@ -1,6 +1,5 @@
 package not.a.portal.extensions
 
 import org.bukkit.block.Block
-import org.bukkit.block.BlockFace
 
-infix fun BlockFace.of(block: Block) = block.getRelative(this)
+fun Block.getRelative(xOff: Int = 0, yOff: Int = 0, zOff: Int = 0) = this.getRelative(xOff, yOff, zOff)
