@@ -95,10 +95,7 @@ class PortalFrame(val struckBlock: Block) {
                 if (topLength == posXBaseLength + negXBaseLength) {
                     log.trace { "Frame has valid x-wise top" }
 
-                    orientation = Orientation.X
-                    _bottomCorner = negXBaseCorner
-                    _topCorner = topCorner
-                    return true
+                    return checkCenter(Orientation.X, negXBaseCorner, topCorner)
                 }
             }
         }
@@ -122,15 +119,39 @@ class PortalFrame(val struckBlock: Block) {
                 if (topLength == posZBaseLength + negZBaseLength) {
                     log.trace { "Frame has valid z-wise top" }
 
-                    orientation = Orientation.Z
-                    _bottomCorner = negZBaseCorner
-                    _topCorner = topCorner
-                    return true
+                    return checkCenter(Orientation.Z, negZBaseCorner, topCorner)
                 }
             }
         }
 
         return false
+    }
+
+    private fun checkCenter(orientation: Orientation, bottomCorner: Block, topCorner: Block): Boolean {
+        val height = topCorner.y - bottomCorner.y - 1
+        val length = when (orientation) {
+            Orientation.X -> topCorner.x - bottomCorner.x - 1
+            Orientation.Z -> topCorner.z - bottomCorner.z - 1
+            else -> throw IllegalStateException("Orientation should not be INVALID")
+        }
+
+        for (v in 1..height) {
+            for (h in 1..length) {
+                val block = when (orientation) {
+                    Orientation.X -> bottomCorner.getRelative(yOff = v, xOff = h)
+                    Orientation.Z -> bottomCorner.getRelative(yOff = v, zOff = h)
+                    else -> throw IllegalStateException("Orientation should not be INVALID")
+                }
+                if (block.type != Material.AIR) return false
+            }
+        }
+
+        log.trace { "Frame has hollow center" }
+
+        this.orientation = orientation
+        _bottomCorner = bottomCorner
+        _topCorner = topCorner
+        return true
     }
 
     fun createPortal() {
