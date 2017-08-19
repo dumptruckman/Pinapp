@@ -23,11 +23,9 @@
  */
 package not.a.portal
 
-import com.okkero.skedule.schedule
 import not.a.portal.extensions.getRelative
 import not.a.portal.extensions.of
 import not.a.portal.util.log
-import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace.*
@@ -75,8 +73,11 @@ class PortalFrame(val struckBlock: Block) {
         val posZBaseLength = baseGuide.trace(zOff = 1, yCheck = 1)
         val negZBaseLength = baseGuide.trace(zOff = -1, yCheck = 1)
 
-        if (posXBaseLength > 0 && negXBaseLength > 0 && posXBaseLength + negXBaseLength <= MAX_SIZE) {
-            log.trace { "Frame has valid x-wise base of length ${posXBaseLength + negXBaseLength + 1}" }
+        val xBaseLength = posXBaseLength + negXBaseLength
+        val zBaseLength = posZBaseLength + negZBaseLength
+
+        if (posXBaseLength > 0 && negXBaseLength > 0 && xBaseLength <= MAX_SIZE && xBaseLength + 1 >= MIN_H_SIZE) {
+            log.trace { "Frame has valid x-wise base of length ${xBaseLength + 1}" }
 
             val posXBaseCorner = struckBlock.getRelative(xOff = posXBaseLength)
             val negXBaseCorner = struckBlock.getRelative(xOff = -negXBaseLength)
@@ -84,7 +85,8 @@ class PortalFrame(val struckBlock: Block) {
             val posXSideLength = FrameGuide(posXBaseCorner).trace(yOff = 1, xCheck = -1)
             val negXSideLength = FrameGuide(negXBaseCorner).trace(yOff = 1, xCheck = 1)
 
-            if (posXSideLength > 0 && negXSideLength > 0 && posXSideLength == negXSideLength) {
+            if (posXSideLength > 0 && negXSideLength > 0 && posXSideLength == negXSideLength
+                    && posXSideLength + 1 >= MIN_V_SIZE) {
                 log.trace { "Frame has valid x-wise sides of ${posXSideLength + 1}" }
 
                 val topCorner = posXBaseCorner.getRelative(yOff = posXSideLength)
@@ -101,8 +103,8 @@ class PortalFrame(val struckBlock: Block) {
             }
         }
 
-        if (posZBaseLength > 0 && negZBaseLength > 0 && posZBaseLength + negZBaseLength <= MAX_SIZE) {
-            log.trace { "Frame has valid z-wise base of length ${posZBaseLength + negZBaseLength + 1}" }
+        if (posZBaseLength > 0 && negZBaseLength > 0 && zBaseLength <= MAX_SIZE && zBaseLength + 1 >= MIN_H_SIZE) {
+            log.trace { "Frame has valid z-wise base of length ${zBaseLength + 1}" }
 
             val posZBaseCorner = struckBlock.getRelative(zOff = posZBaseLength)
             val negZBaseCorner = struckBlock.getRelative(zOff = -negZBaseLength)
@@ -110,7 +112,8 @@ class PortalFrame(val struckBlock: Block) {
             val posZSideLength = FrameGuide(posZBaseCorner).trace(yOff = 1, zCheck = -1)
             val negZSideLength = FrameGuide(negZBaseCorner).trace(yOff = 1, zCheck = 1)
 
-            if (posZSideLength > 0 && negZSideLength > 0 && posZSideLength == negZSideLength) {
+            if (posZSideLength > 0 && negZSideLength > 0 && posZSideLength == negZSideLength
+                    && posZSideLength + 1 >= MIN_V_SIZE) {
                 log.trace { "Frame has valid z-wise sides of ${posZSideLength + 1}" }
 
                 val topCorner = posZBaseCorner.getRelative(yOff = posZSideLength)
@@ -157,6 +160,8 @@ class PortalFrame(val struckBlock: Block) {
 
     companion object {
         private const val MAX_SIZE = 22
+        private const val MIN_H_SIZE = 4
+        private const val MIN_V_SIZE = 5
     }
 
     enum class Orientation(val dataValue: Byte) {
