@@ -43,6 +43,15 @@ class WorldSettings(var worldName: CharSequence,
         return result
     }
 
+    override fun toString(): String {
+        return "WorldSettings(worldName=$worldName," +
+                "material=$material," +
+                "environment=$environment," +
+                "seed=$seed," +
+                "generator=$generator)"
+    }
+
+
     companion object {
 
         @JvmStatic

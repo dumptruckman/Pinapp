@@ -23,10 +23,15 @@
  */
 package not.a.portal
 
+import com.okkero.skedule.schedule
 import not.a.portal.Permissions.CREATE_PORTAL
 import not.a.portal.extensions.cannot
+import not.a.portal.extensions.of
 import not.a.portal.util.log
+import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.block.Block
+import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -38,7 +43,7 @@ class BlockListener(val plugin: Pinapp) : Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     fun blockIgnite(event: BlockIgniteEvent) {
         val player: Player = event.player ?: return
-        val block: Block = event.block
+        val block: Block = BlockFace.DOWN of event.block
 
         val settings = plugin.getWorldSettings(block.type) ?: return
 
@@ -51,7 +56,12 @@ class BlockListener(val plugin: Pinapp) : Listener {
 
         val frame = PortalFrame(block)
 
-        if (frame.isValid) frame.createPortal() else {
+        if (frame.isValid) {
+            Bukkit.getScheduler().schedule(plugin) {
+                waitFor(1)
+                frame.createPortal()
+            }
+        } else {
             log.trace { "${player.name} attempted to light an incomplete portal frame"}
         }
     }

@@ -24,6 +24,7 @@
 package not.a.portal
 
 import ch.qos.logback.classic.Level
+import not.a.portal.extensions.registerEvents
 import not.a.portal.util.Logging
 import not.a.portal.util.log
 import org.bukkit.Material
@@ -45,6 +46,9 @@ class Pinapp : JavaPlugin {
 
     override fun onLoad() {
         Logging.init(this)
+        Logging.setLogLevel(Level.TRACE)
+        log.debug { "DEBUG output enabled" }
+        log.trace { "TRACE output enabled" }
 
         ConfigurationSerialization.registerClass(WorldSettings::class.java)
     }
@@ -53,9 +57,11 @@ class Pinapp : JavaPlugin {
         if (!File(dataFolder, "config.yml").exists()) {
             saveDefaultConfig()
         }
-        Logging.setLogLevel(Level.TRACE)
-        log.debug { "DEBUG output enabled" }
-        log.trace { "TRACE output enabled" }
+        reloadConfig()
+
+        if (isEnabled) { // Events won't be registered when unit testing.
+            BlockListener(this).registerEvents(this)
+        }
     }
 
     override fun reloadConfig() {
@@ -80,7 +86,7 @@ class Pinapp : JavaPlugin {
         config.set("worlds", worldList)
 
         settingsByMaterial.clear()
-        worldList.forEach { if (it.material != Material.AIR) settingsByMaterial[it.material] = it }
+        worldList.filter { it.material != Material.AIR }.forEach {  settingsByMaterial[it.material] = it }
     }
 
     override fun saveConfig() {

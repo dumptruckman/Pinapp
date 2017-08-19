@@ -23,9 +23,11 @@
  */
 package not.a.portal
 
+import com.okkero.skedule.schedule
 import not.a.portal.extensions.getRelative
 import not.a.portal.extensions.of
 import not.a.portal.util.log
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace.*
@@ -36,7 +38,7 @@ class PortalFrame(val struckBlock: Block) {
     private var valid = false
 
     val isNotValid: Boolean
-        get() = isValid
+        get() = !isValid
     val isValid: Boolean
         get() {
             if (validated) {
@@ -74,16 +76,16 @@ class PortalFrame(val struckBlock: Block) {
         val negZBaseLength = baseGuide.trace(zOff = -1, yCheck = 1)
 
         if (posXBaseLength > 0 && negXBaseLength > 0 && posXBaseLength + negXBaseLength <= MAX_SIZE) {
-            log.trace { "Frame has valid x-wise base" }
+            log.trace { "Frame has valid x-wise base of length ${posXBaseLength + negXBaseLength + 1}" }
 
             val posXBaseCorner = struckBlock.getRelative(xOff = posXBaseLength)
-            val negXBaseCorner = struckBlock.getRelative(xOff = posXBaseLength)
+            val negXBaseCorner = struckBlock.getRelative(xOff = -negXBaseLength)
 
             val posXSideLength = FrameGuide(posXBaseCorner).trace(yOff = 1, xCheck = -1)
             val negXSideLength = FrameGuide(negXBaseCorner).trace(yOff = 1, xCheck = 1)
 
             if (posXSideLength > 0 && negXSideLength > 0 && posXSideLength == negXSideLength) {
-                log.trace { "Frame has valid x-wise sides" }
+                log.trace { "Frame has valid x-wise sides of ${posXSideLength + 1}" }
 
                 val topCorner = posXBaseCorner.getRelative(yOff = posXSideLength)
                 val topGuide = FrameGuide(topCorner)
@@ -100,20 +102,20 @@ class PortalFrame(val struckBlock: Block) {
         }
 
         if (posZBaseLength > 0 && negZBaseLength > 0 && posZBaseLength + negZBaseLength <= MAX_SIZE) {
-            log.trace { "Frame has valid z-wise base" }
+            log.trace { "Frame has valid z-wise base of length ${posZBaseLength + negZBaseLength + 1}" }
 
-            val posZBaseCorner = struckBlock.getRelative(xOff = posZBaseLength)
-            val negZBaseCorner = struckBlock.getRelative(xOff = posZBaseLength)
+            val posZBaseCorner = struckBlock.getRelative(zOff = posZBaseLength)
+            val negZBaseCorner = struckBlock.getRelative(zOff = -negZBaseLength)
 
-            val posZSideLength = FrameGuide(posZBaseCorner).trace(yOff = 1, xCheck = -1)
-            val negZSideLength = FrameGuide(negZBaseCorner).trace(yOff = 1, xCheck = 1)
+            val posZSideLength = FrameGuide(posZBaseCorner).trace(yOff = 1, zCheck = -1)
+            val negZSideLength = FrameGuide(negZBaseCorner).trace(yOff = 1, zCheck = 1)
 
             if (posZSideLength > 0 && negZSideLength > 0 && posZSideLength == negZSideLength) {
-                log.trace { "Frame has valid z-wise sides" }
+                log.trace { "Frame has valid z-wise sides of ${posZSideLength + 1}" }
 
                 val topCorner = posZBaseCorner.getRelative(yOff = posZSideLength)
                 val topGuide = FrameGuide(topCorner)
-                val topLength = topGuide.trace(xOff = -1, yCheck = -1)
+                val topLength = topGuide.trace(zOff = -1, yCheck = -1)
                 if (topLength == posZBaseLength + negZBaseLength) {
                     log.trace { "Frame has valid z-wise top" }
 
@@ -131,10 +133,10 @@ class PortalFrame(val struckBlock: Block) {
     fun createPortal() {
         if (isNotValid) throw IllegalStateException("Portal can only be created for a valid portal frame")
 
-        val height = topCorner.y - bottomCorner.z - 1
+        val height = topCorner.y - bottomCorner.y - 1
         val length = when (orientation) {
-            Orientation.X -> topCorner.x - bottomCorner.x
-            Orientation.Z -> topCorner.z - bottomCorner.z
+            Orientation.X -> topCorner.x - bottomCorner.x - 1
+            Orientation.Z -> topCorner.z - bottomCorner.z - 1
             else -> throw IllegalStateException("Orientation should not be INVALID")
         }
 
@@ -145,19 +147,20 @@ class PortalFrame(val struckBlock: Block) {
                     Orientation.Z -> bottomCorner.getRelative(yOff = v, zOff = h)
                     else -> throw IllegalStateException("Orientation should not be INVALID")
                 }
-                block.type = Material.PORTAL
+                block.setType(Material.PORTAL, false)
+                block.setData(orientation.dataValue, false)
             }
         }
 
-        log.trace { "Portal created of type ${struckBlock.type}" }
+        log.trace { "Portal created with ${struckBlock.type} frame" }
     }
 
     companion object {
         private const val MAX_SIZE = 22
     }
 
-    enum class Orientation {
-        X, Z, INVALID
+    enum class Orientation(val dataValue: Byte) {
+        X(1), Z(2), INVALID(0)
     }
 
     private class FrameGuide(val originBlock: Block) {
