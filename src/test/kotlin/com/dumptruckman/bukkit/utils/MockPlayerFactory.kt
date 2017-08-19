@@ -1,5 +1,5 @@
 /*
- * This file is part of kpiston.
+ * This file is part of Pinapp.
  *
  * Copyright (c) 2017 Jeremy Wood
  *
