@@ -30,7 +30,6 @@ class BlockListener(val plugin: Pinapp) : Listener {
 
         if (frame.isValid) frame.createPortal() else {
             log.trace { "${player.name} attempted to light an incomplete portal frame"}
-            return
         }
     }
 }

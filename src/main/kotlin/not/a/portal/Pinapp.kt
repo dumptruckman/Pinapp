@@ -1,5 +1,6 @@
 package not.a.portal
 
+import ch.qos.logback.classic.Level
 import not.a.portal.util.Logging
 import not.a.portal.util.log
 import org.bukkit.Material
@@ -29,6 +30,9 @@ class Pinapp : JavaPlugin {
         if (!File(dataFolder, "config.yml").exists()) {
             saveDefaultConfig()
         }
+        Logging.setLogLevel(Level.TRACE)
+        log.debug { "DEBUG output enabled" }
+        log.trace { "TRACE output enabled" }
     }
 
     override fun reloadConfig() {
