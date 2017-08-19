@@ -196,15 +196,19 @@ class PortalFrame(val struckBlock: Block) {
         fun trace(xOff: Int = 0, yOff: Int = 0, zOff: Int = 0, xCheck: Int = 0, yCheck: Int = 0, zCheck: Int = 0): Int {
             for (i in 1..MAX_SIZE) {
                 val checkBlock = originBlock.getRelative(xOff * i, yOff * i, zOff * i)
+                val turnBlock = checkBlock.getRelative(xCheck, yCheck, zCheck)
                 if (isCorrectType(checkBlock)) {
-                    val turnBlock = checkBlock.getRelative(xCheck, yCheck, zCheck)
                     if (isCorrectType(turnBlock)) {
                         return i
                     } else if (turnBlock.type != Material.AIR) {
                         return 0
                     }
                 } else {
-                    return 0
+                    if (isCorrectType(turnBlock)) {
+                        return i
+                    } else {
+                        return 0
+                    }
                 }
             }
             return 0
