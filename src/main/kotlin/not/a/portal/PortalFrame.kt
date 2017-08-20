@@ -32,6 +32,8 @@ import org.bukkit.block.BlockFace.*
 
 class PortalFrame(val struckBlock: Block) {
 
+    val type: Material = struckBlock.type
+
     private var validated = false
     private var valid = false
 
@@ -66,7 +68,7 @@ class PortalFrame(val struckBlock: Block) {
         val upBlock = UP of struckBlock
         if (upBlock.type != Material.AIR) return false
 
-        val baseGuide = FrameGuide(struckBlock)
+        val baseGuide = FrameGuide(struckBlock, type)
 
         val posXBaseLength = baseGuide.trace(xOff = 1, yCheck = 1)
         val negXBaseLength = baseGuide.trace(xOff = -1, yCheck = 1)
@@ -82,15 +84,15 @@ class PortalFrame(val struckBlock: Block) {
             val posXBaseCorner = struckBlock.getRelative(xOff = posXBaseLength)
             val negXBaseCorner = struckBlock.getRelative(xOff = -negXBaseLength)
 
-            val posXSideLength = FrameGuide(posXBaseCorner).trace(yOff = 1, xCheck = -1)
-            val negXSideLength = FrameGuide(negXBaseCorner).trace(yOff = 1, xCheck = 1)
+            val posXSideLength = FrameGuide(posXBaseCorner, type).trace(yOff = 1, xCheck = -1)
+            val negXSideLength = FrameGuide(negXBaseCorner, type).trace(yOff = 1, xCheck = 1)
 
             if (posXSideLength > 0 && negXSideLength > 0 && posXSideLength == negXSideLength
                     && posXSideLength + 1 >= MIN_V_SIZE) {
                 log.trace { "Frame has valid x-wise sides of ${posXSideLength + 1}" }
 
                 val topCorner = posXBaseCorner.getRelative(yOff = posXSideLength)
-                val topGuide = FrameGuide(topCorner)
+                val topGuide = FrameGuide(topCorner, type)
                 val topLength = topGuide.trace(xOff = -1, yCheck = -1)
                 if (topLength == posXBaseLength + negXBaseLength) {
                     log.trace { "Frame has valid x-wise top" }
@@ -106,15 +108,15 @@ class PortalFrame(val struckBlock: Block) {
             val posZBaseCorner = struckBlock.getRelative(zOff = posZBaseLength)
             val negZBaseCorner = struckBlock.getRelative(zOff = -negZBaseLength)
 
-            val posZSideLength = FrameGuide(posZBaseCorner).trace(yOff = 1, zCheck = -1)
-            val negZSideLength = FrameGuide(negZBaseCorner).trace(yOff = 1, zCheck = 1)
+            val posZSideLength = FrameGuide(posZBaseCorner, type).trace(yOff = 1, zCheck = -1)
+            val negZSideLength = FrameGuide(negZBaseCorner, type).trace(yOff = 1, zCheck = 1)
 
             if (posZSideLength > 0 && negZSideLength > 0 && posZSideLength == negZSideLength
                     && posZSideLength + 1 >= MIN_V_SIZE) {
                 log.trace { "Frame has valid z-wise sides of ${posZSideLength + 1}" }
 
                 val topCorner = posZBaseCorner.getRelative(yOff = posZSideLength)
-                val topGuide = FrameGuide(topCorner)
+                val topGuide = FrameGuide(topCorner, type)
                 val topLength = topGuide.trace(zOff = -1, yCheck = -1)
                 if (topLength == posZBaseLength + negZBaseLength) {
                     log.trace { "Frame has valid z-wise top" }
@@ -142,7 +144,7 @@ class PortalFrame(val struckBlock: Block) {
                     Orientation.Z -> bottomCorner.getRelative(yOff = v, zOff = h)
                     else -> throw IllegalStateException("Orientation should not be INVALID")
                 }
-                if (block.type != Material.AIR) return false
+                if (block.type != Material.AIR && block.type != Material.FIRE) return false
             }
         }
 
@@ -189,9 +191,9 @@ class PortalFrame(val struckBlock: Block) {
         X(1), Z(2), INVALID(0)
     }
 
-    private class FrameGuide(val originBlock: Block) {
+    private class FrameGuide(val originBlock: Block, val type: Material) {
 
-        fun isCorrectType(block: Block) = block.type == originBlock.type
+        fun isCorrectType(block: Block) = block.type == type
 
         fun trace(xOff: Int = 0, yOff: Int = 0, zOff: Int = 0, xCheck: Int = 0, yCheck: Int = 0, zCheck: Int = 0): Int {
             for (i in 1..MAX_SIZE) {
