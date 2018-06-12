@@ -30,9 +30,7 @@ import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace.*
 
-class PortalFrame(val struckBlock: Block) {
-
-    val type: Material = struckBlock.type
+class PortalFrame(val struckBlock: Block, val type: Material = struckBlock.type) {
 
     private var validated = false
     private var valid = false

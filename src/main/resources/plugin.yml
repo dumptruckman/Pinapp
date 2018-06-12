@@ -6,3 +6,5 @@ version: @plugin_version@
 permissions:
   pinapp.portal.create:
     default: OP
+  pinapp.portal.travel:
+    default: OP

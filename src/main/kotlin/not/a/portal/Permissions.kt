@@ -25,4 +25,5 @@ package not.a.portal
 
 object Permissions {
     const val CREATE_PORTAL = "pinapp.portal.create"
+    const val TRAVEL_BY_PORTAL = "pinapp.portal.travel"
 }

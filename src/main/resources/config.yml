@@ -1,6 +1,19 @@
 worlds:
+    # world name
   - name: world
+    # material for portal frame
     material: IRON_ORE
-    seed: 1557195922
-    generator: Default
+    # environment of world (defaults to normal if not listed)
     env: Normal
+    # seed for generating new world (optional)
+    seed: 1557195922
+    # generator for generating new world (optional)
+    generator: Default
+    # whether or not non-player entities can use the portal (defaults to true)
+    allowEntities: true
+    # optional extra permissions
+    permissions:
+      # permission to create this portal (optional)
+      create: pinapp.portal.create.iron
+      # permission to travel through this portal (optional)
+      travel: pinapp.portal.travel.iron
